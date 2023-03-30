@@ -32,4 +32,9 @@ public class Status {
     public void setDetail(String detail) {
         this.detail = detail;
     }
+
+    @Override
+    public String toString() {
+        return "Updated Time: " + statusTime + "/ current Location: " + currentPosition + "/ Detail : " + detail;
+    }
 }
