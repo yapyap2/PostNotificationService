@@ -1,4 +1,4 @@
-package com.yapyap.postserviceproject.Service.parser.documentGetter;
+package com.yapyap.postserviceproject.Service.documentGetter;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

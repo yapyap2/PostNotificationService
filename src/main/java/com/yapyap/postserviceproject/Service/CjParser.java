@@ -1,7 +1,7 @@
-package com.yapyap.postserviceproject.Service.parser;
+package com.yapyap.postserviceproject.Service;
 
 import com.yapyap.postserviceproject.ApiAddress;
-import com.yapyap.postserviceproject.Service.parser.documentGetter.DocumentGetter;
+import com.yapyap.postserviceproject.Service.documentGetter.DocumentGetter;
 import com.yapyap.postserviceproject.Status;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -17,14 +17,23 @@ public class CjParser implements Parser{
     private DocumentGetter documentGetter;
 
     @Override
-    public List<Status> parsing(String query) {
-
-        Document doc = null;
+    public List<Status> getStatus(String query) {
 
         try {
-            doc = documentGetter.getDocument(ApiAddress.CJ_ADDRESS + query);
+            return parsing(query);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } catch (RuntimeException e){
+            throw e;
+        }
+
+    }
+    private List<Status> parsing(String query) throws IOException {
+
+        Document doc = documentGetter.getDocument(ApiAddress.CJ_ADDRESS + query);
+
+        if (!checkAvailable(doc)){
+            throw new RuntimeException("unavailable invoice code");
         }
 
         Element table = doc.getElementsByTag("table").get(6);
@@ -56,8 +65,17 @@ public class CjParser implements Parser{
         return statusList;
     }
 
-
     public void setDocumentGetter(DocumentGetter documentGetter) {
         this.documentGetter = documentGetter;
     }
+
+    private boolean checkAvailable(Document doc){
+
+        String status = doc.getElementsByTag("table").get(2)
+                .getElementsByTag("td").get(4).text();
+
+        return !status.startsWith("등록되지 않은");
+    }
+
+
 }
