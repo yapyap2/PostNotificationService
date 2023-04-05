@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,13 +18,17 @@ import java.util.Map;
 public class SearchingService {
 
     Map<Carrier, Parser> parserMap;
+    HashMap<String, UserInvoice> invoiceMap = new HashMap<>();
 
-    List<UserInvoice> invoiceList = new ArrayList<>();
+    Boolean deleteMode = true;
     public void addInvoiceNumber(String invoice, String email, int carrier){
 
+        if(invoiceMap.containsKey(invoice)){
+            throw new RuntimeException("Duplicated invoice code : " + invoice);
+        }
 
         if(!parserMap.get(Carrier.valueOf(carrier)).verifyInvoiceCode(invoice)){
-            throw new RuntimeException("unavailable invoice code");
+            throw new RuntimeException("unavailable invoice code : " + invoice);
         }
 
 
@@ -32,7 +37,7 @@ public class SearchingService {
         user.setEmail(email);
         user.setCarrier(carrier);
 
-        invoiceList.add(user);
+        invoiceMap.put(invoice, user);
     }
 
     @Scheduled(fixedDelay = 1000)
@@ -40,7 +45,7 @@ public class SearchingService {
 
         List<UserInvoice> removeList = new ArrayList<>();
 
-        for(UserInvoice invoice : invoiceList){
+        for(UserInvoice invoice : invoiceMap.values()){
             Parser parser = parserMap.get(invoice.getCarrier());
             List<Status> statusList = null;
             try{
@@ -51,17 +56,20 @@ public class SearchingService {
             if(invoice.getStatuses().size() < statusList.size()){  //배송상황 변경사항 존재하는 경우
                 invoice.updateStatus(statusList.subList(0, statusList.size()- invoice.getStatuses().size()));
 
-                if(parser.checkComplete(statusList.get(0))){ //배송 완료된 경우
+                if(parser.checkComplete(statusList.get(0)) && deleteMode){ //배송 완료된 경우, deleteMode 가 True 여야만 삭제
                     removeList.add(invoice);
                 }
             }
         }
-        invoiceList.removeAll(removeList);
+
+        for(UserInvoice invoice : removeList){
+            invoiceMap.remove(invoice.getInvoiceNumber());
+        }
     }
 
 
     public void clearList(){
-        invoiceList.clear();
+        invoiceMap.clear();
     }
 
     public void setParserMap(Map<Carrier, Parser> parserMap) {
@@ -69,6 +77,10 @@ public class SearchingService {
     }
 
     public List<UserInvoice> getInvoiceList(){
-        return invoiceList;
+        return new ArrayList<UserInvoice>(invoiceMap.values());
+    }
+
+    public void setDeleteMode(Boolean deleteMode) {
+        this.deleteMode = deleteMode;
     }
 }

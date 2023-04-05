@@ -1,9 +1,11 @@
 package com.yapyap.postserviceproject.Service;
 
 import com.yapyap.postserviceproject.Carrier;
+import com.yapyap.postserviceproject.InvoiceNumber;
 import com.yapyap.postserviceproject.Service.SearchingService;
 import com.yapyap.postserviceproject.Service.documentGetter.DocumentGetter;
 import com.yapyap.postserviceproject.Service.documentGetter.LocalDocumentGetter;
+import lombok.RequiredArgsConstructor;
 import org.jsoup.nodes.Document;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +40,7 @@ public class SearchingServiceTest {
     public void invoiceAddTest(){
 
         UserInvoice invoice = new UserInvoice();
-        invoice.setInvoiceNumber("invoice Number");
+        invoice.setInvoiceNumber(InvoiceNumber.CJ_INVOICE_NUM);
         invoice.setEmail("wonwoo42@gmail.com");
         invoice.setCarrier(1);
 
@@ -59,7 +61,7 @@ public class SearchingServiceTest {
         searchingService.addInvoiceNumber("363818621704", "wonwoo42@gmail.com", 1);
 
 
-        Thread.sleep(10000);
+        Thread.sleep(1000);
     }
 
     @Test(expected = RuntimeException.class)
@@ -77,18 +79,20 @@ public class SearchingServiceTest {
     @DirtiesContext
     public void statusUpdateTestInLocal() throws InterruptedException {
 
+        searchingService.setDeleteMode(false);
+
         LocalDocumentGetter documentGetter = new LocalDocumentGetter();
         documentGetter.setLocalResource("/CjHtml1.html");
 
         context.getBean("cjParser", CjParser.class).setDocumentGetter(documentGetter);
         searchingService.addInvoiceNumber("363818621704", "wonwoo42@gmail.com", 1);
 
-        Thread.sleep(3000);
+        Thread.sleep(1000);
         assertThat(searchingService.getInvoiceList().get(0).getStatuses().size(), is(7));
 
         documentGetter.setLocalResource("/CjHtml2.html");
 
-        Thread.sleep(3000);
+        Thread.sleep(1000);
         assertThat(searchingService.getInvoiceList().get(0).getStatuses().size(), is(8));
 
     }
@@ -103,18 +107,31 @@ public class SearchingServiceTest {
 
         searchingService.addInvoiceNumber("fake invoice code", "wonwoo42@gmail.com", Carrier.CJ.intValue());
 
-        Thread.sleep(3000);
+        Thread.sleep(1000);
 
         assertThat(searchingService.getInvoiceList().size(), is(1));
 
         localDocumentGetter.setLocalResource("/CjHtml2.html");
 
-        Thread.sleep(3000);
+        Thread.sleep(1000);
 
         assertThat(searchingService.getInvoiceList().size(), is(0));
     }
 
+    @DirtiesContext
+    @Test(expected = RuntimeException.class)
+    public void duplicateInvoiceCodeTest(){
 
+        searchingService.setDeleteMode(false);
 
+        searchingService.addInvoiceNumber(InvoiceNumber.CJ_INVOICE_NUM, "www", Carrier.CJ.intValue());
+
+        try {
+            searchingService.addInvoiceNumber(InvoiceNumber.CJ_INVOICE_NUM, "www2", Carrier.CJ.intValue());
+        } catch (RuntimeException e){
+            e.printStackTrace();
+            throw e;
+        }
+    }
 
 }
