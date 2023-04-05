@@ -9,4 +9,6 @@ public interface Parser {
     public List<Status> getStatus(String query);
 
     public void setDocumentGetter(DocumentGetter documentGetter);
+
+    public boolean verifyInvoiceCode(String invoice);
 }

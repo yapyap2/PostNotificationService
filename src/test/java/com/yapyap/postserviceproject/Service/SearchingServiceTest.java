@@ -2,10 +2,14 @@ package com.yapyap.postserviceproject.Service;
 
 import com.yapyap.postserviceproject.Carrier;
 import com.yapyap.postserviceproject.Service.SearchingService;
+import com.yapyap.postserviceproject.Service.documentGetter.DocumentGetter;
+import com.yapyap.postserviceproject.Service.documentGetter.LocalDocumentGetter;
+import org.jsoup.nodes.Document;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -21,6 +25,8 @@ public class SearchingServiceTest {
     @Autowired
     SearchingService searchingService;
 
+    @Autowired
+    ApplicationContext context;
     @Before
     public void before(){
         searchingService.clearList();
@@ -54,6 +60,39 @@ public class SearchingServiceTest {
 
         Thread.sleep(10000);
     }
+
+    @Test(expected = RuntimeException.class)
+    public void unavailableInvoiceTest() throws InterruptedException {
+
+        try{
+            searchingService.addInvoiceNumber("fake Invoice Number", "wonwoo42@gmail.com", 1);
+        } catch (Exception e){
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @Test
+    public void statusUpdateTestInLocal() throws InterruptedException {
+
+        LocalDocumentGetter documentGetter = new LocalDocumentGetter();
+        documentGetter.setLocalResource("/CjHtml1.html");
+
+        context.getBean("cjParser", CjParser.class).setDocumentGetter(documentGetter);
+        searchingService.addInvoiceNumber("363818621704", "wonwoo42@gmail.com", 1);
+
+        Thread.sleep(3000);
+        assertThat(searchingService.getInvoiceList().get(0).getStatuses().size(), is(7));
+
+        documentGetter.setLocalResource("/CjHtml2.html");
+
+        Thread.sleep(3000);
+        assertThat(searchingService.getInvoiceList().get(0).getStatuses().size(), is(8));
+
+
+    }
+
+
 
 
 }

@@ -53,17 +53,14 @@ public class ParserTest {
 
     }
 
-    @Test(expected = RuntimeException.class)
-    public void unavailableInvoiceTestInLocal(){
-        localDocumentGetter.setLocalResource("/CjHtmlUnavailable.html");
-        cjParser.setDocumentGetter(localDocumentGetter);
+    @Test()
+    public void verifyInvoiceCodeTest(){
 
-        try {
-            cjParser.getStatus("fake Invoice Number");
-        } catch (RuntimeException e){
-            e.printStackTrace();
-            throw e;
-        }
+        assertTrue(cjParser.verifyInvoiceCode(InvoiceNumber.CJ_INVOICE_NUM));
+        assertFalse(cjParser.verifyInvoiceCode("fake invoice code"));
+
     }
+
+
 
 }

@@ -22,19 +22,11 @@ public class CjParser implements Parser{
         try {
             return parsing(query);
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (RuntimeException e){
-            throw e;
-        }
-
+            throw new RuntimeException(e);}
     }
     private List<Status> parsing(String query) throws IOException {
 
         Document doc = documentGetter.getDocument(ApiAddress.CJ_ADDRESS + query);
-
-        if (!checkAvailable(doc)){
-            throw new RuntimeException("unavailable invoice code");
-        }
 
         Element table = doc.getElementsByTag("table").get(6);
 
@@ -75,6 +67,17 @@ public class CjParser implements Parser{
                 .getElementsByTag("td").get(4).text();
 
         return !status.startsWith("등록되지 않은");
+    }
+
+    public boolean verifyInvoiceCode(String invoice){
+
+        Document doc;
+        try {
+            doc = documentGetter.getDocument(ApiAddress.CJ_ADDRESS + invoice);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return checkAvailable(doc);
     }
 
 

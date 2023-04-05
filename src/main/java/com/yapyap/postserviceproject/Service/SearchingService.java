@@ -21,6 +21,11 @@ public class SearchingService {
     List<UserInvoice> invoiceList = new ArrayList<>();
     public void addInvoiceNumber(String invoice, String email, int carrier){
 
+
+        if(!parserMap.get(Carrier.valueOf(carrier)).verifyInvoiceCode(invoice)){
+            throw new RuntimeException("unavailable invoice code");
+        }
+
         UserInvoice user = new UserInvoice();
         user.setInvoiceNumber(invoice);
         user.setEmail(email);
@@ -34,9 +39,15 @@ public class SearchingService {
 
         for(UserInvoice invoice : invoiceList){
             Parser parser = parserMap.get(invoice.getCarrier());
-            List<Status> list = parser.getStatus(invoice.getInvoiceNumber());
-
-            list.forEach(status -> System.out.println(status));
+            List<Status> statusList = null;
+            try{
+                statusList = parser.getStatus(invoice.getInvoiceNumber());
+            } catch (RuntimeException e){
+                continue;
+            }
+            if(invoice.getStatuses().size() < statusList.size()){
+                invoice.updateStatus(statusList.subList(0, statusList.size()- invoice.getStatuses().size()));
+            }
         }
 
     }
