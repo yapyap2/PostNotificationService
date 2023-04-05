@@ -26,6 +26,7 @@ public class SearchingService {
             throw new RuntimeException("unavailable invoice code");
         }
 
+
         UserInvoice user = new UserInvoice();
         user.setInvoiceNumber(invoice);
         user.setEmail(email);
@@ -37,6 +38,8 @@ public class SearchingService {
     @Scheduled(fixedDelay = 1000)
     public void searching(){
 
+        List<UserInvoice> removeList = new ArrayList<>();
+
         for(UserInvoice invoice : invoiceList){
             Parser parser = parserMap.get(invoice.getCarrier());
             List<Status> statusList = null;
@@ -45,11 +48,15 @@ public class SearchingService {
             } catch (RuntimeException e){
                 continue;
             }
-            if(invoice.getStatuses().size() < statusList.size()){
+            if(invoice.getStatuses().size() < statusList.size()){  //배송상황 변경사항 존재하는 경우
                 invoice.updateStatus(statusList.subList(0, statusList.size()- invoice.getStatuses().size()));
+
+                if(parser.checkComplete(statusList.get(0))){ //배송 완료된 경우
+                    removeList.add(invoice);
+                }
             }
         }
-
+        invoiceList.removeAll(removeList);
     }
 
 

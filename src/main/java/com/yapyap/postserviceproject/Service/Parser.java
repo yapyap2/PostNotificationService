@@ -11,4 +11,6 @@ public interface Parser {
     public void setDocumentGetter(DocumentGetter documentGetter);
 
     public boolean verifyInvoiceCode(String invoice);
+
+    public boolean checkComplete(Status status);
 }

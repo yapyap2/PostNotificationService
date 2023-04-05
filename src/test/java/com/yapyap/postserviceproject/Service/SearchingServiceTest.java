@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -73,6 +74,7 @@ public class SearchingServiceTest {
     }
 
     @Test
+    @DirtiesContext
     public void statusUpdateTestInLocal() throws InterruptedException {
 
         LocalDocumentGetter documentGetter = new LocalDocumentGetter();
@@ -89,7 +91,27 @@ public class SearchingServiceTest {
         Thread.sleep(3000);
         assertThat(searchingService.getInvoiceList().get(0).getStatuses().size(), is(8));
 
+    }
 
+    @Test
+    public void completedInvoiceTest() throws InterruptedException {
+
+        LocalDocumentGetter localDocumentGetter = new LocalDocumentGetter();
+        localDocumentGetter.setLocalResource("/CjHtml1.html");
+
+        context.getBean("cjParser", CjParser.class).setDocumentGetter(localDocumentGetter);
+
+        searchingService.addInvoiceNumber("fake invoice code", "wonwoo42@gmail.com", Carrier.CJ.intValue());
+
+        Thread.sleep(3000);
+
+        assertThat(searchingService.getInvoiceList().size(), is(1));
+
+        localDocumentGetter.setLocalResource("/CjHtml2.html");
+
+        Thread.sleep(3000);
+
+        assertThat(searchingService.getInvoiceList().size(), is(0));
     }
 
 

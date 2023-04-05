@@ -80,5 +80,11 @@ public class CjParser implements Parser{
         return checkAvailable(doc);
     }
 
-
+    @Override
+    public boolean checkComplete(Status status) {
+        if(status.getDetail().equals("배달완료")){
+            return true;
+        }
+        return false;
+    }
 }

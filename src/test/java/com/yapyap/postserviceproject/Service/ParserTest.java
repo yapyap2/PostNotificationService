@@ -61,6 +61,20 @@ public class ParserTest {
 
     }
 
+    @Test
+    public void checkCompleteTest(){
+        LocalDocumentGetter localDocumentGetter =  new LocalDocumentGetter();
+        localDocumentGetter.setLocalResource("/CjHtml1.html");
+
+        cjParser.setDocumentGetter(localDocumentGetter);
+        List<Status> list = cjParser.getStatus("fake invoice code");
+        assertFalse(cjParser.checkComplete(list.get(0)));
+
+        localDocumentGetter.setLocalResource("/CjHtml2.html");
+        list = cjParser.getStatus("fake invoice code");
+        assertTrue(cjParser.checkComplete(list.get(0)));
+
+    }
 
 
 }
