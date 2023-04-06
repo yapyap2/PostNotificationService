@@ -19,7 +19,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/applicationContext.xml")
+@ContextConfiguration("/testApplicationContext.xml")
 public class SearchingServiceTest {
 
     @Autowired
@@ -57,8 +57,7 @@ public class SearchingServiceTest {
     public void searchingTest() throws InterruptedException {
         searchingService.addInvoiceNumber("363818621704", "wonwoo42@gmail.com", 1);
 
-
-        Thread.sleep(1000);
+        searchingService.searching();
     }
 
     @Test(expected = RuntimeException.class)
@@ -79,17 +78,15 @@ public class SearchingServiceTest {
         searchingService.setDeleteMode(false);
 
         LocalDocumentGetter documentGetter = new LocalDocumentGetter();
-        documentGetter.setLocalResource("/CjHtml1.html");
+        documentGetter.setLocalResource("CJService");
 
         context.getBean("cjParser", CjParser.class).setDocumentGetter(documentGetter);
-        searchingService.addInvoiceNumber("363818621704", "wonwoo42@gmail.com", 1);
+        searchingService.addInvoiceNumber("fake invoice code", "wonwoo42@gmail.com", 1);
 
-        Thread.sleep(1000);
+        searchingService.searching();
         assertThat(searchingService.getInvoiceList().get(0).getStatuses().size(), is(7));
 
-        documentGetter.setLocalResource("/CjHtml2.html");
-
-        Thread.sleep(1000);
+        searchingService.searching();
         assertThat(searchingService.getInvoiceList().get(0).getStatuses().size(), is(8));
 
     }
@@ -98,19 +95,17 @@ public class SearchingServiceTest {
     public void completedInvoiceTest() throws InterruptedException {
 
         LocalDocumentGetter localDocumentGetter = new LocalDocumentGetter();
-        localDocumentGetter.setLocalResource("/CjHtml1.html");
+        localDocumentGetter.setLocalResource("CJService");
 
         context.getBean("cjParser", CjParser.class).setDocumentGetter(localDocumentGetter);
 
         searchingService.addInvoiceNumber("fake invoice code", "wonwoo42@gmail.com", Carrier.CJ.intValue());
 
-        Thread.sleep(1000);
+        searchingService.searching();
 
         assertThat(searchingService.getInvoiceList().size(), is(1));
 
-        localDocumentGetter.setLocalResource("/CjHtml2.html");
-
-        Thread.sleep(1000);
+        searchingService.searching();
 
         assertThat(searchingService.getInvoiceList().size(), is(0));
     }

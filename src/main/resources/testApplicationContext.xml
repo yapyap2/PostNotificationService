@@ -40,8 +40,4 @@
         <entry key="CJ" value-ref="cjParser"/>
     </util:map>
 
-
-    <task:scheduled-tasks>
-        <task:scheduled ref="searchingService" method="searching" fixed-delay="1000"/>
-    </task:scheduled-tasks>
 </beans>

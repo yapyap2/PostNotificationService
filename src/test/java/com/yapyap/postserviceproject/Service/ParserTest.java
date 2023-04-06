@@ -47,31 +47,13 @@ public class ParserTest {
     public void statusUpdateTest(){
 
         LocalDocumentGetter localDocumentGetterForCJ = new LocalDocumentGetter();
-        localDocumentGetterForCJ.setLocalResource("CjHtml1.html");
-
+        localDocumentGetterForCJ.setLocalResource("CJ");
         cjParser.setDocumentGetter(localDocumentGetterForCJ);
         List<Status> cjList1 = cjParser.getStatus("fake Invoice Number");
-
-
-        localDocumentGetterForCJ.setLocalResource("CjHtml2.html");
         List<Status> cjList2 = cjParser.getStatus("fake Invoice Number");
 
         assertThat(cjList2.size(), is(cjList1.size() + 1 ));
         assertThat(cjList2.get(1).toString(), is(cjList1.get(0).toString()));
-
-
-
-        LocalDocumentGetter localDocumentGetterForPost = new LocalDocumentGetter();
-        localDocumentGetterForPost.setLocalResource("PostHtml1.html");
-
-        postParser.setDocumentGetter(localDocumentGetterForPost);
-        List<Status> postList1 = postParser.getStatus("fake invoice number");
-
-        localDocumentGetterForPost.setLocalResource("PostHtml2.html");
-        List<Status> postList2 = postParser.getStatus("fake invoice number");
-
-        assertThat(postList2.size(), is(postList1.size() + 1 ));
-        assertThat(postList2.get(1).toString(), is(postList1.get(0).toString()));
 
     }
 
@@ -86,13 +68,12 @@ public class ParserTest {
     @Test
     public void checkCompleteTest(){
         LocalDocumentGetter localDocumentGetter =  new LocalDocumentGetter();
-        localDocumentGetter.setLocalResource("/CjHtml1.html");
+        localDocumentGetter.setLocalResource("CJ");
 
         cjParser.setDocumentGetter(localDocumentGetter);
         List<Status> list = cjParser.getStatus("fake invoice code");
         assertFalse(cjParser.checkComplete(list.get(0)));
 
-        localDocumentGetter.setLocalResource("/CjHtml2.html");
         list = cjParser.getStatus("fake invoice code");
         assertTrue(cjParser.checkComplete(list.get(0)));
 

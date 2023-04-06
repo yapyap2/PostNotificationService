@@ -40,7 +40,6 @@ public class SearchingService {
         invoiceMap.put(invoice, user);
     }
 
-    @Scheduled(fixedDelay = 1000)
     public void searching(){
 
         List<UserInvoice> removeList = new ArrayList<>();
