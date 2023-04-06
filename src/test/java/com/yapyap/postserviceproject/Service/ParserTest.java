@@ -12,6 +12,9 @@ import com.yapyap.postserviceproject.Status;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
@@ -19,63 +22,73 @@ import static org.junit.Assert.*;
 
 public class ParserTest {
 
-    Parser cjParser = new CjParser();
-    Parser postParser = new PostParser();
+    List<Parser> parserList = new ArrayList<>(Arrays.asList(new CjParser(), new PostParser()));
 
-
-    DocumentGetter documentGetter = new ApiDocumentGetter();
-    LocalDocumentGetter localDocumentGetter = new LocalDocumentGetter();
-
+    DocumentGetter apiDocumentGetter = new ApiDocumentGetter();
 
     @Before
-    public void beforeTest(){
-        cjParser.setDocumentGetter(documentGetter);
-        postParser.setDocumentGetter(new PostDocumentGetter());
+    public void beforeTest(){ //localDocumentGetter의 생성자로 로컬 html파일 경로를 제공함. 단, CJ대한 통운의 경우 'CJ'만 전달하기에 Service Test 에서는 'Service' 를 붙여줘야 함.
+        parserList.forEach(parser -> parser.setDocumentGetter(new LocalDocumentGetter(parser.getCarrier())));
+    }
+
+    private void prepareOnline(){
+        for (Parser parser : parserList) {
+            if(parser.getClass() == PostParser.class){
+                parser.setDocumentGetter(new PostDocumentGetter());
+            }
+            else {
+                parser.setDocumentGetter(apiDocumentGetter);
+            }
+        }
     }
 
     @Test
     public void simpleParsingUsingApiTest(){
-        List<Status> cjList = cjParser.getStatus(InvoiceNumber.CJ_INVOICE_NUM);
-        List<Status> postList = postParser.getStatus(InvoiceNumber.POST_INVOICE_NUM);
+        prepareOnline();
 
-        cjList.forEach(item -> System.out.println(item));
-        postList.forEach(item -> System.out.println(item));
+        for(Parser parser : parserList){
+            List<Status> list = parser.getStatus(InvoiceNumber.getInvoiceCode(parser.getClass()));
+
+            list.forEach(item -> System.out.println(item));
+        }
 
     }
 
     @Test
     public void statusUpdateTest(){
 
-        LocalDocumentGetter localDocumentGetterForCJ = new LocalDocumentGetter();
-        localDocumentGetterForCJ.setLocalResource("CJ");
-        cjParser.setDocumentGetter(localDocumentGetterForCJ);
-        List<Status> cjList1 = cjParser.getStatus("fake Invoice Number");
-        List<Status> cjList2 = cjParser.getStatus("fake Invoice Number");
+        for(Parser parser : parserList){
+            List<Status> list1 = parser.getStatus("fake Invoice Number");
+            List<Status> list2 = parser.getStatus("fake Invoice Number");
 
-        assertThat(cjList2.size(), is(cjList1.size() + 1 ));
-        assertThat(cjList2.get(1).toString(), is(cjList1.get(0).toString()));
+            assertThat(list2.size(), is(list1.size() + 1 ));
+            assertThat(list2.get(1).toString(), is(list1.get(0).toString()));
+        }
 
     }
 
     @Test()
     public void verifyInvoiceCodeTest(){
+        prepareOnline();
 
-        assertTrue(cjParser.verifyInvoiceCode(InvoiceNumber.CJ_INVOICE_NUM));
-        assertFalse(cjParser.verifyInvoiceCode("fake invoice code"));
+        for(Parser parser : parserList){
+            assertTrue(parser.verifyInvoiceCode(InvoiceNumber.getInvoiceCode(parser.getClass())));
+            assertFalse(parser.verifyInvoiceCode("fake invoice code"));
+        }
 
     }
 
     @Test
     public void checkCompleteTest(){
-        LocalDocumentGetter localDocumentGetter =  new LocalDocumentGetter();
-        localDocumentGetter.setLocalResource("CJ");
 
-        cjParser.setDocumentGetter(localDocumentGetter);
-        List<Status> list = cjParser.getStatus("fake invoice code");
-        assertFalse(cjParser.checkComplete(list.get(0)));
+        for(Parser parser : parserList){
 
-        list = cjParser.getStatus("fake invoice code");
-        assertTrue(cjParser.checkComplete(list.get(0)));
+            List<Status> list = parser.getStatus("fake invoice code");
+            assertFalse(parser.checkComplete(list.get(0)));
+
+            list = parser.getStatus("fake invoice code");
+            assertTrue(parser.checkComplete(list.get(0)));
+        }
 
     }
 

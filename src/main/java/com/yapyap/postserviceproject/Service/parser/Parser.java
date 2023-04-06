@@ -13,4 +13,6 @@ public interface Parser {
     public boolean verifyInvoiceCode(String invoice);
 
     public boolean checkComplete(Status status);
+
+    public String getCarrier();
 }

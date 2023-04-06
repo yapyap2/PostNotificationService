@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class PostParser implements Parser{
+    String carrier = "POST";
 
     DocumentGetter documentGetter;
     @Override
@@ -54,14 +55,20 @@ public class PostParser implements Parser{
     }
 
     public Boolean checkAvailable(Document doc){
-        return doc.getElementsByTag("successYN").get(0).text().startsWith("Y");
+        Boolean res;
+        try {
+            res = doc.getElementsByTag("successyn").get(0).text().startsWith("Y");
+        } catch (IndexOutOfBoundsException e){
+            res = false;
+        }
+        return res;
     }
 
     @Override
     public boolean verifyInvoiceCode(String invoice) {
         Document doc;
         try {
-            doc = documentGetter.getDocument(ApiAddress.CJ_ADDRESS + invoice);
+            doc = documentGetter.getDocument(ApiAddress.POST_ADDRESS + invoice);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -71,6 +78,11 @@ public class PostParser implements Parser{
     @Override
     public boolean checkComplete(Status status) {
         return status.getDetail().startsWith("배달완료");
+    }
+
+    @Override
+    public String getCarrier() {
+        return carrier;
     }
 
 }

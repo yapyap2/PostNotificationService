@@ -45,7 +45,6 @@ public class SearchingServiceTest {
 
         List<UserInvoice> list = searchingService.getInvoiceList();
 
-
         assertThat(list.size(), is(1));
         assertThat(list.get(0).getInvoiceNumber(), is(invoice.getInvoiceNumber()));
         assertThat(list.get(0).getEmail(), is(invoice.getEmail()));
@@ -125,5 +124,7 @@ public class SearchingServiceTest {
             throw e;
         }
     }
+
+
 
 }

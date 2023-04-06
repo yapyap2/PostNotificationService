@@ -1,5 +1,6 @@
 package com.yapyap.postserviceproject.Service.documentGetter;
 
+import lombok.NoArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -7,7 +8,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+@NoArgsConstructor
 public class LocalDocumentGetter implements DocumentGetter{
+    public LocalDocumentGetter(String localResource){
+        this.localResource = localResource;
+    }
 
     private int counter = 1;
     String localResource;

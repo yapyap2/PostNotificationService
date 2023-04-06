@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CjParser implements Parser {
+    String carrier = "CJ";
 
     private DocumentGetter documentGetter;
 
@@ -86,5 +87,10 @@ public class CjParser implements Parser {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public String getCarrier() {
+        return carrier;
     }
 }
