@@ -3,9 +3,9 @@ package com.yapyap.postserviceproject.Service;
 
 
 import com.yapyap.postserviceproject.Carrier;
+import com.yapyap.postserviceproject.Service.parser.Parser;
 import com.yapyap.postserviceproject.Status;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

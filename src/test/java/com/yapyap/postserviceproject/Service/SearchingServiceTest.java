@@ -2,11 +2,8 @@ package com.yapyap.postserviceproject.Service;
 
 import com.yapyap.postserviceproject.Carrier;
 import com.yapyap.postserviceproject.InvoiceNumber;
-import com.yapyap.postserviceproject.Service.SearchingService;
-import com.yapyap.postserviceproject.Service.documentGetter.DocumentGetter;
 import com.yapyap.postserviceproject.Service.documentGetter.LocalDocumentGetter;
-import lombok.RequiredArgsConstructor;
-import org.jsoup.nodes.Document;
+import com.yapyap.postserviceproject.Service.parser.CjParser;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

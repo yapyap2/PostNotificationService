@@ -1,4 +1,4 @@
-package com.yapyap.postserviceproject.Service;
+package com.yapyap.postserviceproject.Service.parser;
 
 import com.yapyap.postserviceproject.ApiAddress;
 import com.yapyap.postserviceproject.Service.documentGetter.DocumentGetter;
@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CjParser implements Parser{
+public class CjParser implements Parser {
 
     private DocumentGetter documentGetter;
 

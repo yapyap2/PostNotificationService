@@ -1,4 +1,4 @@
-package com.yapyap.postserviceproject.Service;
+package com.yapyap.postserviceproject.Service.parser;
 
 import com.yapyap.postserviceproject.Service.documentGetter.DocumentGetter;
 import com.yapyap.postserviceproject.Status;

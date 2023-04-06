@@ -29,7 +29,7 @@
 
 
 
-    <bean id="cjParser" class="com.yapyap.postserviceproject.Service.CjParser">
+    <bean id="cjParser" class="com.yapyap.postserviceproject.Service.parser.CjParser">
         <property name="documentGetter" ref="documentGetter"/>
     </bean>
 
