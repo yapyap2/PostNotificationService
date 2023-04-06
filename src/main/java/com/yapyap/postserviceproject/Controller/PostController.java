@@ -37,6 +37,4 @@ public class PostController {
         return test;
     }
 
-
-
 }
