@@ -6,7 +6,6 @@ public enum Carrier {
 
     private final int value;
 
-
     Carrier(int value) {
         this.value = value;
     }
@@ -22,5 +21,9 @@ public enum Carrier {
             case 2 : return POST;
             default: throw new AssertionError("Unknown Value : " + value);
         }
+    }
+
+    public static int carrierCount(){
+        return values().length;
     }
 }

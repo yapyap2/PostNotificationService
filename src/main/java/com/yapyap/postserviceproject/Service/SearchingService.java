@@ -82,4 +82,12 @@ public class SearchingService {
     public void setDeleteMode(Boolean deleteMode) {
         this.deleteMode = deleteMode;
     }
+
+    public List<Parser> getParserList(){
+        return parserMap.values().stream().toList();
+    }
+
+    public HashMap<String, UserInvoice> getInvoiceMap() {
+        return invoiceMap;
+    }
 }

@@ -30,14 +30,14 @@
 
 
     <bean id="cjParser" class="com.yapyap.postserviceproject.Service.parser.CjParser">
-        <property name="documentGetter" ref="documentGetter"/>
+    </bean>
+    <bean id="postParser" class="com.yapyap.postserviceproject.Service.parser.PostParser">
     </bean>
 
-    <bean id="documentGetter" class="com.yapyap.postserviceproject.Service.documentGetter.ApiDocumentGetter">
-    </bean>
 
     <util:map id="parserMap" key-type="com.yapyap.postserviceproject.Carrier">
         <entry key="CJ" value-ref="cjParser"/>
+        <entry key="POST" value-ref="postParser"/>
     </util:map>
 
 </beans>

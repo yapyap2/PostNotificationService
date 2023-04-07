@@ -2,8 +2,12 @@ package com.yapyap.postserviceproject.Service;
 
 import com.yapyap.postserviceproject.Carrier;
 import com.yapyap.postserviceproject.InvoiceNumber;
+import com.yapyap.postserviceproject.Service.documentGetter.ApiDocumentGetter;
 import com.yapyap.postserviceproject.Service.documentGetter.LocalDocumentGetter;
+import com.yapyap.postserviceproject.Service.documentGetter.PostDocumentGetter;
 import com.yapyap.postserviceproject.Service.parser.CjParser;
+import com.yapyap.postserviceproject.Service.parser.Parser;
+import com.yapyap.postserviceproject.Status;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +17,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
@@ -29,7 +34,19 @@ public class SearchingServiceTest {
     ApplicationContext context;
     @Before
     public void before(){
+        searchingService.setDeleteMode(true);
         searchingService.clearList();
+        searchingService.getParserList().forEach(parser -> parser.setDocumentGetter(new LocalDocumentGetter(parser.getCarrier() + "Service")));
+    }
+
+    private void prepareOnline(){
+        List<Parser> list = searchingService.getParserList();
+        for (Parser parser : list){
+            if(parser.getCarrier().equals("POST")){
+                parser.setDocumentGetter(new PostDocumentGetter());
+            }
+            parser.setDocumentGetter(new ApiDocumentGetter());
+        }
     }
 
 
@@ -59,61 +76,67 @@ public class SearchingServiceTest {
         searchingService.searching();
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void unavailableInvoiceTest() throws InterruptedException {
 
-        try{
-            searchingService.addInvoiceNumber("fake Invoice Number", "wonwoo42@gmail.com", 1);
-        } catch (Exception e){
-            e.printStackTrace();
-            throw e;
+        prepareOnline();
+
+        for(int i = 1; i <= Carrier.carrierCount(); i++){
+            try {
+                searchingService.addInvoiceNumber("fake Invoice Number" + Integer.toString(i), "email", i);
+            } catch (RuntimeException e){
+                e.printStackTrace();
+                assertTrue(e.getMessage().startsWith("unavailable invoice code"));
+            }
         }
     }
 
     @Test
     @DirtiesContext
     public void statusUpdateTestInLocal() throws InterruptedException {
-
         searchingService.setDeleteMode(false);
 
-        LocalDocumentGetter documentGetter = new LocalDocumentGetter();
-        documentGetter.setLocalResource("CJService");
+        for(int i = 1; i <= Carrier.carrierCount(); i++){
 
-        context.getBean("cjParser", CjParser.class).setDocumentGetter(documentGetter);
-        searchingService.addInvoiceNumber("fake invoice code", "wonwoo42@gmail.com", 1);
+            String fakeInvoiceCode = "fake invoice code" + Integer.toString(i);
+            searchingService.addInvoiceNumber(fakeInvoiceCode, "email", i);
+            searchingService.searching();
 
-        searchingService.searching();
-        assertThat(searchingService.getInvoiceList().get(0).getStatuses().size(), is(7));
+            List<Status> list1 = new ArrayList<>();
+            list1.addAll(searchingService.getInvoiceMap().get(fakeInvoiceCode).getStatuses());
 
-        searchingService.searching();
-        assertThat(searchingService.getInvoiceList().get(0).getStatuses().size(), is(8));
+            searchingService.searching();
+
+
+            List<Status> list2 = new ArrayList<>();
+            list2.addAll(searchingService.getInvoiceMap().get(fakeInvoiceCode).getStatuses());
+
+            assertThat(list2.size(), is(list1.size() + 1));
+            assertThat(list2.get(1), is(list1.get(0)));
+        }
 
     }
 
     @Test
-    public void completedInvoiceTest() throws InterruptedException {
+    public void completedInvoiceTest() {
 
-        LocalDocumentGetter localDocumentGetter = new LocalDocumentGetter();
-        localDocumentGetter.setLocalResource("CJService");
+        for(int i = 1; i <= Carrier.carrierCount(); i++){
+            String fakeInvoiceNumber = "fake invoice Number" + Integer.toString(i);
 
-        context.getBean("cjParser", CjParser.class).setDocumentGetter(localDocumentGetter);
+            searchingService.addInvoiceNumber(fakeInvoiceNumber, "email", i);
 
-        searchingService.addInvoiceNumber("fake invoice code", "wonwoo42@gmail.com", Carrier.CJ.intValue());
+            searchingService.searching();
 
-        searchingService.searching();
+            assertThat(searchingService.getInvoiceList().size(), is(1));
 
-        assertThat(searchingService.getInvoiceList().size(), is(1));
+            searchingService.searching();
 
-        searchingService.searching();
-
-        assertThat(searchingService.getInvoiceList().size(), is(0));
+            assertThat(searchingService.getInvoiceList().size(), is(0));
+        }
     }
 
-    @DirtiesContext
     @Test(expected = RuntimeException.class)
     public void duplicateInvoiceCodeTest(){
-
-        searchingService.setDeleteMode(false);
 
         searchingService.addInvoiceNumber(InvoiceNumber.CJ_INVOICE_NUM, "www", Carrier.CJ.intValue());
 
