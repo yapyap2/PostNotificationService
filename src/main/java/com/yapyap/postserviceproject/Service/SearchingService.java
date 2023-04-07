@@ -3,6 +3,8 @@ package com.yapyap.postserviceproject.Service;
 
 
 import com.yapyap.postserviceproject.Carrier;
+import com.yapyap.postserviceproject.Service.Exception.DuplicatedInvoiceException;
+import com.yapyap.postserviceproject.Service.Exception.UnavailableInvoiceException;
 import com.yapyap.postserviceproject.Service.parser.Parser;
 import com.yapyap.postserviceproject.Status;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 
-@Service
 public class SearchingService {
 
     Map<Carrier, Parser> parserMap;
@@ -24,11 +25,11 @@ public class SearchingService {
     public void addInvoiceNumber(String invoice, String email, int carrier){
 
         if(invoiceMap.containsKey(invoice)){
-            throw new RuntimeException("Duplicated invoice code : " + invoice);
+            throw new DuplicatedInvoiceException("Duplicated invoice code : " + invoice);
         }
 
         if(!parserMap.get(Carrier.valueOf(carrier)).verifyInvoiceCode(invoice)){
-            throw new RuntimeException("unavailable invoice code : " + invoice);
+            throw new UnavailableInvoiceException("unavailable invoice code : " + invoice);
         }
 
 
@@ -57,6 +58,7 @@ public class SearchingService {
 
                 if(parser.checkComplete(statusList.get(0)) && deleteMode){ //배송 완료된 경우, deleteMode 가 True 여야만 삭제
                     removeList.add(invoice);
+                    System.out.println("배송완료 : " + invoice.toString());
                 }
             }
         }

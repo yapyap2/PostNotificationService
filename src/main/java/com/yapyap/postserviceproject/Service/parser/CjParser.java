@@ -67,6 +67,10 @@ public class CjParser implements Parser {
         String status = doc.getElementsByTag("table").get(2)
                 .getElementsByTag("td").get(4).text();
 
+        if(status.isEmpty()){ //CJ의 경우 11, 12자리 송장번호만 있음 10자리 부터는 아예 조회가 되지 않기에 이 경우의 리턴 조건
+            return false;
+        }
+
         return !status.startsWith("등록되지 않은");
     }
 

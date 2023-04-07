@@ -48,4 +48,9 @@ public class UserInvoice {
     public void updateStatus(List<Status> list){
         statuses.addAll(0, list);
     }
+
+    @Override
+    public String toString() {
+       return "{ invoiceCode : " + invoiceNumber + " userId : " + email +" }";
+    }
 }
