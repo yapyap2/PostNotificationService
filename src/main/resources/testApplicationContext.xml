@@ -33,11 +33,13 @@
     </bean>
     <bean id="postParser" class="com.yapyap.postserviceproject.Service.parser.PostParser">
     </bean>
+    <bean id="logenParser" class="com.yapyap.postserviceproject.Service.parser.LogenParser"/>
 
 
     <util:map id="parserMap" key-type="com.yapyap.postserviceproject.Carrier">
         <entry key="CJ" value-ref="cjParser"/>
         <entry key="POST" value-ref="postParser"/>
+        <entry key="LOGEN" value-ref="logenParser"/>
     </util:map>
 
 </beans>

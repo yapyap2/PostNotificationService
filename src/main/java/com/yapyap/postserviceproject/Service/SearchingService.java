@@ -50,7 +50,7 @@ public class SearchingService {
             List<Status> statusList = null;
             try{
                 statusList = parser.getStatus(invoice.getInvoiceNumber());
-            } catch (RuntimeException e){
+            } catch (RuntimeException e){   // API 통신 오류, 예외 처리 작업 필요
                 continue;
             }
             if(invoice.getStatuses().size() < statusList.size()){  //배송상황 변경사항 존재하는 경우

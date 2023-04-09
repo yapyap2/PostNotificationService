@@ -6,6 +6,7 @@ import com.yapyap.postserviceproject.Service.documentGetter.DocumentGetter;
 import com.yapyap.postserviceproject.Service.documentGetter.LocalDocumentGetter;
 import com.yapyap.postserviceproject.Service.documentGetter.PostDocumentGetter;
 import com.yapyap.postserviceproject.Service.parser.CjParser;
+import com.yapyap.postserviceproject.Service.parser.LogenParser;
 import com.yapyap.postserviceproject.Service.parser.Parser;
 import com.yapyap.postserviceproject.Service.parser.PostParser;
 import com.yapyap.postserviceproject.Status;
@@ -22,7 +23,7 @@ import static org.junit.Assert.*;
 
 public class ParserTest {
 
-    List<Parser> parserList = new ArrayList<>(Arrays.asList(new CjParser(), new PostParser()));
+    List<Parser> parserList = new ArrayList<>(Arrays.asList(new CjParser(), new PostParser(), new LogenParser()));
 
     DocumentGetter apiDocumentGetter = new ApiDocumentGetter();
 
@@ -50,6 +51,7 @@ public class ParserTest {
             List<Status> list = parser.getStatus(InvoiceNumber.getInvoiceCode(parser.getClass()));
 
             list.forEach(item -> System.out.println(item));
+            System.out.println("\n");
         }
 
     }

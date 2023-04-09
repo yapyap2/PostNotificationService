@@ -2,7 +2,7 @@ package com.yapyap.postserviceproject;
 
 public enum Carrier {
 
-    CJ(1), POST(2);
+    CJ(1), POST(2), LOGEN(3);
 
     private final int value;
 
@@ -19,6 +19,7 @@ public enum Carrier {
         switch (value){
             case 1 : return CJ;
             case 2 : return POST;
+            case 3 : return LOGEN;
             default: throw new AssertionError("Unknown Value : " + value);
         }
     }

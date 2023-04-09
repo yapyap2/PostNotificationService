@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class LogenAPITest {
@@ -41,8 +42,20 @@ public class LogenAPITest {
             statusList.add(status);
         }
 
+        Collections.reverse(statusList);
 
         statusList.forEach(i -> System.out.println(i.toString()));
+    }
+
+    @Test
+    public void checkAvailable() throws IOException {
+        String invoice = "3478850110";
+
+        Document document = Jsoup.connect("https://www.ilogen.com/web/personal/trace/" + invoice).get();
+
+        System.out.println(document.getElementsByClass("data tkInfo").size());
+
+
     }
 
 }

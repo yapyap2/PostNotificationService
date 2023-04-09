@@ -66,7 +66,6 @@ public class SearchingServiceTest {
         assertThat(list.get(0).getInvoiceNumber(), is(invoice.getInvoiceNumber()));
         assertThat(list.get(0).getEmail(), is(invoice.getEmail()));
         assertThat(list.get(0).getCarrier(), is(Carrier.CJ));
-
     }
 
     @Test
