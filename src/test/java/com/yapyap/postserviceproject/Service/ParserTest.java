@@ -5,10 +5,7 @@ import com.yapyap.postserviceproject.Service.documentGetter.ApiDocumentGetter;
 import com.yapyap.postserviceproject.Service.documentGetter.DocumentGetter;
 import com.yapyap.postserviceproject.Service.documentGetter.LocalDocumentGetter;
 import com.yapyap.postserviceproject.Service.documentGetter.PostDocumentGetter;
-import com.yapyap.postserviceproject.Service.parser.CjParser;
-import com.yapyap.postserviceproject.Service.parser.LogenParser;
-import com.yapyap.postserviceproject.Service.parser.Parser;
-import com.yapyap.postserviceproject.Service.parser.PostParser;
+import com.yapyap.postserviceproject.Service.parser.*;
 import com.yapyap.postserviceproject.Status;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +20,7 @@ import static org.junit.Assert.*;
 
 public class ParserTest {
 
-    List<Parser> parserList = new ArrayList<>(Arrays.asList(new CjParser(), new PostParser(), new LogenParser()));
+    List<Parser> parserList = new ArrayList<>(Arrays.asList(new CjParser(), new PostParser(), new LogenParser(), new HanjinParser()));
 
     DocumentGetter apiDocumentGetter = new ApiDocumentGetter();
 
