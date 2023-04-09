@@ -35,6 +35,7 @@
     </bean>
     <bean id="logenParser" class="com.yapyap.postserviceproject.Service.parser.LogenParser"/>
     <bean id="hanjinParser" class="com.yapyap.postserviceproject.Service.parser.HanjinParser"/>
+    <bean id="lotteParser" class="com.yapyap.postserviceproject.Service.parser.LotteParser"/>
 
 
     <util:map id="parserMap" key-type="com.yapyap.postserviceproject.Carrier">
@@ -42,6 +43,7 @@
         <entry key="POST" value-ref="postParser"/>
         <entry key="LOGEN" value-ref="logenParser"/>
         <entry key="HANJIN" value-ref="hanjinParser"/>
+        <entry key="LOTTE" value-ref="lotteParser"/>
     </util:map>
 
 </beans>

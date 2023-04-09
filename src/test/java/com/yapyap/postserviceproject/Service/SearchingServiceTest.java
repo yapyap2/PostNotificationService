@@ -5,7 +5,6 @@ import com.yapyap.postserviceproject.InvoiceNumber;
 import com.yapyap.postserviceproject.Service.documentGetter.ApiDocumentGetter;
 import com.yapyap.postserviceproject.Service.documentGetter.LocalDocumentGetter;
 import com.yapyap.postserviceproject.Service.documentGetter.PostDocumentGetter;
-import com.yapyap.postserviceproject.Service.parser.CjParser;
 import com.yapyap.postserviceproject.Service.parser.Parser;
 import com.yapyap.postserviceproject.Status;
 import org.junit.Before;

@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
 
 public class ParserTest {
 
-    List<Parser> parserList = new ArrayList<>(Arrays.asList(new CjParser(), new PostParser(), new LogenParser(), new HanjinParser()));
+    List<Parser> parserList = new ArrayList<>(Arrays.asList(new CjParser(), new PostParser(), new LogenParser(), new HanjinParser(), new LotteParser()));
 
     DocumentGetter apiDocumentGetter = new ApiDocumentGetter();
 
